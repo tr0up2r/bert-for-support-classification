@@ -128,8 +128,8 @@ def accuracy_per_class(preds, labels):
     for label in np.unique(labels_flat):
         y_preds = preds_flat[labels_flat == label]
         y_true = labels_flat[labels_flat == label]
-        print(f'Class: {label_dict_inverse[label]}')
-        print(f'Accuracy: {len(y_preds[y_preds == label])}/{len(y_true)}\n')
+        print(f'Class {label_dict_inverse[label]} : ', end='')
+        print(f'{len(y_preds[y_preds == label])}/{len(y_true)}')
 
 
 # Training Loop
@@ -175,6 +175,14 @@ def evaluate(dataloader_val):
     return loss_val_avg, predictions, true_vals
 
 
+model.to(device)
+
+model.load_state_dict(torch.load('data_volume/inf_finetuned_BERT_epoch_10.model', map_location=torch.device('cpu')))
+
+_, predictions, true_vals = evaluate(dataloader_validation)
+accuracy_per_class(predictions, true_vals)
+
+'''
 for epoch in tqdm(range(1, epochs + 1)):
     model.train()
 
@@ -207,7 +215,7 @@ for epoch in tqdm(range(1, epochs + 1)):
         progress_bar.set_postfix({'training_loss': '{:.3f}'.format(loss.item() / len(batch))})
         i += 1
 
-    torch.save(model.state_dict(), f'data_volume/finetuned_BERT_epoch_{epoch}_inf.model')
+    torch.save(model.state_dict(), f'data_volume/inf_finetuned_BERT_epoch_{epoch}.model')
 
     tqdm.write(f'\nEpoch {epoch}')
 
@@ -218,3 +226,4 @@ for epoch in tqdm(range(1, epochs + 1)):
     val_f1 = f1_score_func(predictions, true_vals)
     tqdm.write(f'Validation loss: {val_loss}')
     tqdm.write(f'F1 Score (Weighted): {val_f1}')
+'''
