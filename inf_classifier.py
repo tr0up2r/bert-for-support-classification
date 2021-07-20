@@ -103,7 +103,7 @@ optimizer = AdamW(model.parameters(),
 
 # epochs 5로 했더니 overfitting 되는 듯.
 # 3 정도가 적당?
-epochs = 5
+epochs = 10
 
 scheduler = get_linear_schedule_with_warmup(optimizer,
                                             num_warmup_steps=0,

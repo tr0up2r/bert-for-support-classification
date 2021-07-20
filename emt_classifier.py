@@ -82,6 +82,7 @@ labels_val = torch.tensor(df[df.data_type == 'val'].label.values)
 dataset_train = TensorDataset(input_ids_train, attention_masks_train, labels_train)
 dataset_val = TensorDataset(input_ids_val, attention_masks_val, labels_val)
 
+# Bert 모델로는 BertForSequenceClassification 사용.
 model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                       num_labels=len(label_dict),
                                                       output_attentions=False,
@@ -99,14 +100,17 @@ dataloader_validation = DataLoader(dataset_val,
                                    batch_size=batch_size)
 
 # Optimizer & Scheduler
+# 사용할 optimizer : AdamW
 optimizer = AdamW(model.parameters(),
-                  lr=1e-5,
-                  eps=1e-8)
+                  lr=1e-5,  # learning rate.
+                  eps=1e-8) # learning rate가 0으로 나눠지는 것을 방지하기 위한 epsilon 값.
 
 # epochs 5로 했더니 overfitting 되는 듯.
 # 3 정도가 적당?
 epochs = 10
 
+# learning rate decay를 위한 scheduler. (linear 이용)
+# lr이 0부터 optimizer에서 설정한 lr까지 linear하게 warmup 됐다가 다시 0으로 linear 하게 감소.
 scheduler = get_linear_schedule_with_warmup(optimizer,
                                             num_warmup_steps=0,
                                             num_training_steps=len(dataloader_train) * epochs)
@@ -118,7 +122,7 @@ scheduler = get_linear_schedule_with_warmup(optimizer,
 def f1_score_func(preds, labels):
     preds_flat = np.argmax(preds, axis=1).flatten()
     labels_flat = labels.flatten()
-    return f1_score(labels_flat, preds_flat, average='weighted')
+    return f1_score(labels_flat, preds_flat, average='weighted')    # multi-class이기 때문에 weighted 사용.
 
 
 def accuracy_per_class(preds, labels):
@@ -187,23 +191,34 @@ for epoch in tqdm(range(1, epochs + 1)):
     for batch in progress_bar:
         model.zero_grad()
 
+        # batch를 device(cpu)에 넣음.
         batch = tuple(b.to(device) for b in batch)
 
+        # batch에서 data 추출.
         inputs = {'input_ids': batch[0],
                   'attention_mask': batch[1],
                   'labels': batch[2],
                   }
 
+        # Forward 수행.
         outputs = model(**inputs)
 
+        # loss 구함.
         loss = outputs[0]
         print(f'i : {i}, loss : {loss}')
+
+        # 총 loss 계산.
         loss_train_total += loss.item()
         loss.backward()
 
+        # gradient clipping을 진행.
+        # gradient exploding을 방지하기 위함으로,
+        # gradient가 일정 threshold를 넘어가면 clipping을 해준다.
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
 
+        # gradient를 이용해 weight update.
         optimizer.step()
+        # scheduler를 이용해 learning rate 조절.
         scheduler.step()
 
         progress_bar.set_postfix({'training_loss': '{:.3f}'.format(loss.item() / len(batch))})
