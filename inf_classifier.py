@@ -16,22 +16,22 @@ from sklearn.metrics import f1_score
 
 df = pd.read_csv('data/data_for_coding_inf.csv', encoding='ISO-8859-1')
 inf_count = df['inf'].value_counts()
-print(f'inf_count :\n{inf_count}\n')
+# print(f'inf_count :\n{inf_count}\n')
 
 possible_labels = df.inf.unique()
 
 # 3, 2, 1 역순으로 되어 있는 것을 reverse 해주어 보다 직관적인 이해를 도움.
 possible_labels = possible_labels[::-1]
-print(f'possible labels : {possible_labels}\n')
+# print(f'possible labels : {possible_labels}\n')
 
 # label column 생성.
 label_dict = {}
 for index, possible_labels in enumerate(possible_labels):
     label_dict[possible_labels] = index
-print(label_dict)
+# print(label_dict)
 
 df['label'] = df.inf.replace(label_dict)
-print(df, '\n')
+# print(df, '\n')
 
 # data split (train & test sets)
 X_train, X_val, y_train, y_val = train_test_split(df.index.values,
@@ -45,7 +45,7 @@ df['data_type'] = ['not_set'] * df.shape[0]
 df.loc[X_train, 'data_type'] = 'train'
 df.loc[X_val, 'data_type'] = 'val'
 
-print(df.groupby(['inf', 'label', 'data_type']).count())
+# print(df.groupby(['inf', 'label', 'data_type']).count())
 
 # BERT
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased',
@@ -174,7 +174,7 @@ def evaluate(dataloader_val):
 
     return loss_val_avg, predictions, true_vals
 
-
+'''
 model.to(device)
 
 model.load_state_dict(torch.load('data_volume/inf_finetuned_BERT_epoch_10.model', map_location=torch.device('cpu')))
@@ -182,7 +182,7 @@ model.load_state_dict(torch.load('data_volume/inf_finetuned_BERT_epoch_10.model'
 _, predictions, true_vals = evaluate(dataloader_validation)
 accuracy_per_class(predictions, true_vals)
 
-'''
+
 for epoch in tqdm(range(1, epochs + 1)):
     model.train()
 
@@ -215,7 +215,7 @@ for epoch in tqdm(range(1, epochs + 1)):
         progress_bar.set_postfix({'training_loss': '{:.3f}'.format(loss.item() / len(batch))})
         i += 1
 
-    torch.save(model.state_dict(), f'data_volume/inf_finetuned_BERT_epoch_{epoch}.model')
+    torch.save(model.state_dict(), f'data_volume/inf_macro_finetuned_BERT_epoch_{epoch}.model')
 
     tqdm.write(f'\nEpoch {epoch}')
 
@@ -225,5 +225,5 @@ for epoch in tqdm(range(1, epochs + 1)):
     val_loss, predictions, true_vals = evaluate(dataloader_validation)
     val_f1 = f1_score_func(predictions, true_vals)
     tqdm.write(f'Validation loss: {val_loss}')
-    tqdm.write(f'F1 Score (Weighted): {val_f1}')
+    tqdm.write(f'F1 Score (Macro): {val_f1}')
 '''
