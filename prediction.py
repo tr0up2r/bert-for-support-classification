@@ -13,7 +13,7 @@ inf_model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                           output_hidden_states=False)
 inf_model.to(inf_classifier.device)
 inf_model.load_state_dict(torch.load('data_volume/inf_finetuned_BERT_epoch_7.model',
-                                     map_location=torch.device('cpu')))
+                                     map_location=torch.device('cuda')))
 
 emt_model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                           num_labels=len(emt_classifier.label_dict),
@@ -21,7 +21,7 @@ emt_model = BertForSequenceClassification.from_pretrained('bert-base-uncased',
                                                           output_hidden_states=False)
 emt_model.to(emt_classifier.device)
 emt_model.load_state_dict(torch.load('data_volume/emt_finetuned_BERT_epoch_8.model',
-                                             map_location=torch.device('cpu')))
+                                     map_location=torch.device('cuda')))
 
 inf_model.eval()
 emt_model.eval()
@@ -34,7 +34,7 @@ print(type(df))
 
 # 최종 결과값을 csv 파일로 저장하기 위한 dataframe 생성.
 result_df = pd.DataFrame(index=range(0),
-                         columns=['comment_key', 'comment_body', 'inf_score', 'emt_score'])
+                         columns=['comment_key', 'inf_score', 'emt_score'])
 
 # 각 score에 해당하는 comment의 수를 세기 위한 dataframe 생성.
 # 이는 별도의 csv 파일로 저장.
@@ -48,7 +48,7 @@ print(f'len : {len(df)}')
 comments_count = len(df)
 
 with torch.no_grad():
-    for i in range(100):
+    for i in range(comments_count):
         comment_key = df['comment_key'][i]
         comment_body = df['comment_body'][i]
         inputs = emt_classifier.tokenizer(comment_body,
@@ -81,13 +81,12 @@ with torch.no_grad():
             emt_score = 1
             emt_count_list[0] += 1
 
-        print(f'test_comment = {comment_body}')
-        print(f'inf_pred_score = {inf_score}')
-        print(f'emt_pred_score = {emt_score}\n')
+        print(i, end=' ')
+        if i % 20 == 0:
+            print()
 
         new_data = {
             'comment_key' : comment_key,
-            'comment_body' : comment_body,
             'inf_score' : inf_score,
             'emt_score' : emt_score
         }
@@ -96,12 +95,12 @@ with torch.no_grad():
 
 
 count_data = {
-    'inf_1' : inf_count_list[0],
-    'inf_2' : inf_count_list[1],
-    'inf_3' : inf_count_list[2],
-    'emt_1' : emt_count_list[0],
-    'emt_2' : emt_count_list[1],
-    'emt_3' : emt_count_list[2]
+    'inf_1': inf_count_list[0],
+    'inf_2': inf_count_list[1],
+    'inf_3': inf_count_list[2],
+    'emt_1': emt_count_list[0],
+    'emt_2': emt_count_list[1],
+    'emt_3': emt_count_list[2]
 }
 count_df = count_df.append(count_data, ignore_index=True)
 

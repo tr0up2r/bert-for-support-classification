@@ -8,11 +8,11 @@ print(df)
 print(type(df))
 comments = df[['comment_key', 'comment_body']]
 df_len = len(df)
-deleted = 0
-for i in range(df_len):
-    if df['comment_body'][i] == '[removed]' or df['comment_body'][i] == '[deleted]':
-        deleted += 1
-print(comments)
-print(deleted)
 
-# comments.to_csv('data/only_comments.csv', sep=',', na_rep='NaN')
+# deleted, removed comments mask 하기.
+mask = comments['comment_body'].isin(['[deleted]', '[removed]'])
+comments = comments[~mask]
+
+print(comments)
+
+comments.to_csv('data/only_comments.csv', sep=',', na_rep='NaN')

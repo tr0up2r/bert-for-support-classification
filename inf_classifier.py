@@ -133,7 +133,7 @@ def accuracy_per_class(preds, labels):
 
 
 # Training Loop
-device = torch.device('cpu')
+device = torch.device('cuda')
 seed_val = 17
 random.seed(seed_val)
 np.random.seed(seed_val)
