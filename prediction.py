@@ -43,9 +43,13 @@ comments_count = len(df)
 row_list = []
 
 with torch.no_grad():
-    for i in range(304001, comments_count):
+    for i in range(410018, comments_count):
         comment_key = df['comment_key'][i]
         comment_body = df['comment_body'][i]
+
+        # NaN 처리를 위한 조건문.
+        if type(comment_body) == float:
+            continue
         link_id = df['link_id'][i]
         parent_id = df['parent_id'][i]
 
