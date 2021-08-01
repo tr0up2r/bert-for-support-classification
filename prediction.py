@@ -43,7 +43,7 @@ comments_count = len(df)
 row_list = []
 
 with torch.no_grad():
-    for i in range(410018, comments_count):
+    for i in range(comments_count):
         comment_key = df['comment_key'][i]
         comment_body = df['comment_body'][i]
 
