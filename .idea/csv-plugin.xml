@@ -17,6 +17,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\masked_prediction_results_count.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\masked_prediction_results_count_without_duplicates.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\prediction_results.csv">
           <value>
             <Attribute>
@@ -31,7 +45,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\data\prediction_results_count_with_masking.csv">
+        <entry key="\data\prediction_results_count_without_duplicates.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\test.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

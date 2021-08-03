@@ -7,7 +7,12 @@ df = pd.read_csv("data/comments.csv",
 print(df)
 print(type(df))
 comments = df[['comment_key', 'link_id', 'parent_id', 'comment_body']]
+print(comments)
 df_len = len(df)
+
+comments = comments.drop_duplicates(['comment_body'])
+print(comments)
+
 
 # deleted, removed comments mask 하기.
 mask = comments['comment_body'].isin(['[deleted]', '[removed]'])

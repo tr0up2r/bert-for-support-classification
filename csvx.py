@@ -26,16 +26,16 @@ def inf_emt_count(result_df):
     return score
 
 
-df = pd.read_csv("data/prediction_results.csv")
+df = pd.read_csv("data/prediction_results_without_duplicates.csv")
 print(df)
 
 result = df[['comment_key', 'inf_score', 'emt_score']]
-result.to_csv('data/prediction_results_2.csv', sep=',', na_rep='NaN', index=None)
+result.to_csv('data/prediction_results_without_duplicates.csv', sep=',', na_rep='NaN', index=None)
 
 
 inf_emt_score = inf_emt_count(df)
 
-with open("data/prediction_results_count.csv", "a") as fp:
+with open("data/prediction_results_count_without_duplicates.csv", "a") as fp:
     wr = csv.writer(fp, dialect='excel')
     wr.writerow(inf_emt_score)
 
@@ -48,11 +48,11 @@ print(masked_df)
 
 # drop 후 바로 count를 진행하면 key error 발생.
 # csv로 저장 후, 다시 불러와서 count 진행하였음.
-masked_df.to_csv('data/masked_prediction_results.csv', sep=',', na_rep='NaN', index=None)
-masked_df = pd.read_csv("data/masked_prediction_results.csv")
+masked_df.to_csv('data/masked_prediction_results_without_duplicates.csv', sep=',', na_rep='NaN', index=None)
+masked_df = pd.read_csv("data/masked_prediction_results_without_duplicates.csv")
 
 inf_emt_score2 = inf_emt_count(masked_df)
 
-with open("data/prediction_results_count_with_masking.csv", "a") as fp:
+with open("data/masked_prediction_results_count_without_duplicates.csv", "a") as fp:
     wr = csv.writer(fp, dialect='excel')
     wr.writerow(inf_emt_score2)
