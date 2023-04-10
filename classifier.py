@@ -123,26 +123,18 @@ def train(dataset_train, dataset_val, label_dict, dataset, path):
                                                           output_attentions=False,
                                                           output_hidden_states=False)
 
-    # Data Loaders
+    # adjust hyper parameters
     batch_size = 3
-
     dataloader_train = DataLoader(dataset_train,
                                   sampler=RandomSampler(dataset_train),
                                   batch_size=batch_size)
-
     dataloader_validation = DataLoader(dataset_val,
                                        sampler=SequentialSampler(dataset_val),
                                        batch_size=batch_size)
-
-    # Optimizer & Scheduler
     optimizer = AdamW(model.parameters(),
                       lr=1e-5,
                       eps=1e-8)
-
-    # epochs 5로 했더니 overfitting 되는 듯.
-    # 3 정도가 적당?
     epochs = 10
-
     scheduler = get_linear_schedule_with_warmup(optimizer,
                                                 num_warmup_steps=0,
                                                 num_training_steps=len(dataloader_train) * epochs)

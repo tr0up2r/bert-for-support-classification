@@ -1,12 +1,12 @@
 import pandas as pd
 import classifier
 
-df = pd.read_csv('data/data_for_coding_emt.csv', encoding='ISO-8859-1')
+df = pd.read_csv('data/data_for_coding_emt.csv', encoding='ISO-8859-1')  # the path of your training dataset file
 
-dataset = 'emt'
+dataset = 'emt'  # your own column name
 emt_count = df[dataset].value_counts()
 
-possible_labels = df.emt.unique()
+possible_labels = df.emt.unique()  # your own column name
 possible_labels = possible_labels[::-1]
 
 # conduct label column

@@ -39,13 +39,12 @@ def predict():
 
     # read csv
     # columns of dataset: ['comment_key', 'comment_body']
-    df = pd.read_csv("data/only_comments.csv")  # the path of your dataset file
-    df = df[:500]
+    df = pd.read_csv("data/only_comments.csv")  # the path of your dataset file want to predict
     comments_count = len(df)
 
     row_list = []
-    columns = ['comment_key', 'inf_score', 'emt_score']
-    path = 'prediction_results.csv'
+    columns = ['comment_key', 'inf_score', 'emt_score']  # your own column names
+    path = 'prediction_results.csv'  # your own file path
 
     with torch.no_grad():
         for i in tqdm(range(comments_count)):
@@ -86,7 +85,7 @@ def predict():
                 'comment_key': comment_key,
                 'inf_score': inf_score,
                 'emt_score': emt_score
-            }
+            }  # your own column names (should be unified with the columns on the 46th line)
 
             row_list.append(new_data)
 
